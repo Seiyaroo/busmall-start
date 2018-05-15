@@ -1,94 +1,127 @@
 'use strict';
 
 // global variable
+
 var allPictures = [];
 var currentPictures = [];
-var previousPictures = [picture1Index, picture2Index, picture3Index];
 var imgEl1 = document.getElementById('image1');
 var imgEl2 = document.getElementById('image2');
 var imgEl3 = document.getElementById('image3');
 var sectionEl = document.getElementById('click-tracker-container');
-var resultUl = document.getElementById('product-result-container');
+
 
 var picture1Index = 0;
-var picture2Index = 1;
-var picture3Index = 2;
+var picture2Index = 0;
+var picture3Index = 0;
+
+var totalClicks = 0;
 
 
-// editing this in so I can push a new commit
-
-function Picture (src, name) {
+function Picture (src, name, clicked) {
     this.url = src;
     this.name = name;
     this.clicked = 0;
+
+
     allPictures.push(this);
 }
 
-previousPictures.push(picture1Index);
-previousPictures.push(picture2Index);
+// sectionEl.addEventListener('click', sectionCallBack);
 
-
-function checkPrevious (index) {
-    previousPictures.push(index);
-    var newIndex = Math.floor(Math.random() * allPictures.length);
-    while (newIndex in previousPictures || newIndex in currentPictures) {
-        console.log("I'm here");
-        newIndex = Math.floor(Math.random() * allPictures.length);
-    }
-    currentPictures.push(newIndex);
-    return newIndex;
-}
-//while (cantBeThis.includes())?  To shorten the above? Or indexOf.
-
-function chooseNewPictures() {
-    picture1Index = checkPrevious(picture1Index);
-    imgEl1.src = allPictures[picture1Index].url;
-
-    picture2Index = checkPrevious(picture2Index);
-    imgEl2.src = allPictures[picture2Index].url;
-
-    picture3Index = checkPrevious(picture3Index);
-    imgEl3.src = allPictures[picture3Index].url;
-   
-    previousPictures = currentPictures;
-    currentPictures = [];
-}
 
 // Event Listeners
 
-imgEl1.addEventListener('click', function() {
+imgEl1.addEventListener('click', imageEl1CallBack);
+
+function imageEl1CallBack() {
     allPictures[picture1Index].clicked++;
+    totalClicks++;
     console.log('clicked on ', allPictures[picture1Index].url);
+    checkTotalClicks();
     chooseNewPictures();
-});
+}
 
-imgEl2.addEventListener('click', function() { 
+imgEl2.addEventListener('click', imageEl2CallBack);
+
+function imageEl2CallBack() { 
     allPictures[picture2Index].clicked++;
+    totalClicks++;
     console.log(allPictures[picture2Index]);
-    console.log("I am image 2!");
+    checkTotalClicks();
     chooseNewPictures();
-})
+}
 
-imgEl3.addEventListener('click', function() { 
+imgEl3.addEventListener('click', imageEl3Callback);
+
+function imageEl3Callback() { 
     allPictures[picture3Index].clicked++;
+    totalClicks++;
     console.log(allPictures[picture3Index]);
-    console.log("I am image 3!");
+    checkTotalClicks();
     chooseNewPictures();
-})
-
+}
 function renderResults(){
     for (var i in allPictures){
-    var newLiEl = document.createElement('li')
-    newLiEl.textContent = allPictures[i].name + ' clicked : ' + allPictures[i].clicked + ' Times';
-    resultUl.appendChild(newLiEl);
+        var newLiEl = document.createElement('li')
+        newLiEl.textContent = allPictures[i].name + ' clicked : ' + allPictures[i].clicked + ' Times';
+        // resultUl.appendChild(newLiEl);
     }
 }
 
+
+// function sectionCallBack(event) {
+//     checkTotalClicks();
+    
+//     if(event.target.id){
+//         totalClicks++;
+//         console.log(totalClicks, 'this is total clicks');
+//         allPictures[event.target.id].clicked++;
+        
+//         chooseNewPictures();
+//     } else {
+//         alert('click on an image');
+//     }
+// }
+
 function checkTotalClicks() {
+    console.log(totalClicks);
     if(totalClicks === 25) {
+        console.log('removed');
         renderResults();
-        img1.removeEventListener('click', )
+        imgEl1.removeEventListener('click', imageEl1CallBack);
+        imgEl2.removeEventListener('click', imageEl2CallBack);
+        imgEl3.removeEventListener('click', imageEl3Callback);
     }
+}
+
+
+//New Pictures
+
+function chooseNewPictures() {
+    var previousPictures = [picture1Index, picture2Index, picture3Index];
+    
+    
+    do{
+        picture1Index = Math.floor(Math.random() * allPictures.length);
+    } while (previousPictures.includes(picture1Index))
+    previousPictures.push(picture1Index);
+    
+    do{
+        picture2Index = Math.floor(Math.random() * allPictures.length);
+    } while (previousPictures.includes(picture2Index));
+    previousPictures.push(picture2Index);
+    
+    do{
+        picture3Index = Math.floor(Math.random() * allPictures.length);
+    } while (previousPictures.includes(picture3Index));
+    previousPictures.push(picture3Index);
+    
+    imgEl1.src = allPictures[picture1Index].url;
+    imgEl1.id = picture1Index; //sets the image id = to the reference of its corresponding object's position in the array of all images
+    imgEl2.src = allPictures[picture2Index].url;
+    imgEl2.id = picture2Index;
+    imgEl3.src = allPictures[picture3Index].url;
+    imgEl3.id = picture3Index;
 }
 
 new Picture('imgs/bag.jpg', 'r2-d2');
@@ -112,6 +145,4 @@ new Picture('imgs/usb.gif', 'tentacle-p..or..t');
 new Picture('imgs/water-can.jpg', 'water-jug');
 new Picture('imgs/wine-glass.jpg', 'smart-alcoholic');
 
-
 chooseNewPictures();
-
