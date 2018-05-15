@@ -14,6 +14,9 @@ var picture1Index = 0;
 var picture2Index = 1;
 var picture3Index = 2;
 
+
+// editing this in so I can push a new commit
+
 function Picture (src, name) {
     this.url = src;
     this.name = name;
