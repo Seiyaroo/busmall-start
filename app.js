@@ -45,7 +45,7 @@ function chooseNewPictures() {
     imgEl2.src = allPictures[picture2Index].url;
 
     picture3Index = checkPrevious(picture3Index);
-    imgEl3.src = allPictures[picture1Index].url;
+    imgEl3.src = allPictures[picture3Index].url;
    
     previousPictures = currentPictures;
     currentPictures = [];
