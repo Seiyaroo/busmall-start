@@ -6,6 +6,7 @@ var allPictures = [];
 var currentPictures = [];
 var voteTotal = []; // array to push the amount of votes into for chart
 var pictureNames = []; //self-explanatory for picture names
+var clicksComplete = false;
 
 var imgEl1 = document.getElementById('image1'); // Left Image
 var imgEl2 = document.getElementById('image2'); // Center Image
@@ -36,41 +37,33 @@ function Picture (src, name, clicked) {
 
 // Event Listener
 
-imgEl1.addEventListener('click', imageEl1CallBack);
+imgEl1.addEventListener('click', () => vote(allPictures, picture1Index));
 
-function imageEl1CallBack() {
-    allPictures[picture1Index].clicked++;
-    totalClicks++;
+imgEl2.addEventListener('click', () => vote(allPictures, picture2Index));
+
+imgEl3.addEventListener('click', () => vote(allPictures, picture3Index));
+
+
+
+function vote(pictures, index) {
+    if (clicksComplete === false) {
+        pictures[index].clicked++;
+        totalClicks++;
+    }
     // console.log('clicked on ', allPictures[picture1Index].url);
-    if (totalClicks < 25) {
+    if (totalClicks < 5) {
         checkTotalClicks();
         chooseNewPictures();
     
     } else {
+        clicksComplete = true;
         updateChartArrays();
-        drawChart
+        drawChart();
     }
 }
 
-imgEl2.addEventListener('click', imageEl2CallBack);
 
-function imageEl2CallBack() { 
-    allPictures[picture2Index].clicked++;
-    totalClicks++;
-    // console.log(allPictures[picture2Index]);
-    checkTotalClicks();
-    chooseNewPictures();
-}
 
-imgEl3.addEventListener('click', imageEl3Callback);
-
-function imageEl3Callback() { 
-    allPictures[picture3Index].clicked++;
-    totalClicks++;
-    // console.log(allPictures[picture3Index]);
-    checkTotalClicks();
-    chooseNewPictures();
-}
 function renderResults(){
     for (var i in allPictures){
         var newLiEl = document.createElement('li')
@@ -190,44 +183,41 @@ function drawChart() {
     myChart = new Chart(ctx, {
         type: 'bar',
         data: data,
-        options: {
-            scales: {
-                yAxes: [{
+        options: { 
+            responsive: true,
+            animation: {
+              duration: 100,
+              easing: 'easeOutBounce'
+            }
+        },
+        scales: {
+            yAxes: [
+                {
                     ticks: {
                         beginAtZero:true
                     }
-                }]
-                
-            }
+                }
+            ] 
         }
     });
 }
-
 chooseNewPictures();
-// updateChartArrays();
-// drawChart();
-
-// function hideChart() {
-    //     document.getElementById('busmall-chart').hidden = true;
-    // }
-    
-    // document.getElementById('busmall-chart').addEventListener('click', function() {
-//     drawChart();
-//     // setTimeout(hideChart, 5000);
-//   });
-
-//   document.getElementById('busmall-chart').addEventListener('click', function() {
-//       document.getElementById('busmall-chart').hidden = true;
-//     });
-    
 
 
-//   document.getElementById('voting').addEventListener('click', function(event) {
-//     if (event.target.id !== 'voting') {
-//       tallyVote(event.target.id);
-//     };
-  
-//     if (chartDrawn) {
-//       songChart.update();
+
+// function onPageLoad() {
+//     //if local storage data exists
+//     if (localStorage.array) {
+//         //recall data 
+//         arrayOfItems = JSON.parse(localStorage.getItem('array'))
+
+//         selectNewObjects();
+//         buildDisplayTable();
 //     }
-//   });
+
+//     else {
+//         initialize();
+//     }
+// }
+
+// onPageLoad();
