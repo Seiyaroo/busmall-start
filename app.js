@@ -1,9 +1,16 @@
 'use strict';
 
 // global variable
+var Product = {
+    clicksComplete: false,
+    totalClicks: 0,
+    pictureNames: [],
+    myPictures: []
+}
 
 var allPictures = [];
 var currentPictures = [];
+var myPictures = [];
 var voteTotal = []; // array to push the amount of votes into for chart
 var pictureNames = []; //self-explanatory for picture names
 var clicksComplete = false;
@@ -30,11 +37,6 @@ function Picture (src, name, clicked) {
     allPictures.push(this);
 }
 
-
-
-// sectionEl.addEventListener('click', sectionCallBack);
-
-
 // Event Listener
 
 imgEl1.addEventListener('click', () => vote(allPictures, picture1Index));
@@ -50,7 +52,7 @@ function vote(pictures, index) {
         pictures[index].clicked++;
         totalClicks++;
     }
-    // console.log('clicked on ', allPictures[picture1Index].url);
+
     if (totalClicks < 5) {
         checkTotalClicks();
         chooseNewPictures();
@@ -68,24 +70,9 @@ function renderResults(){
     for (var i in allPictures){
         var newLiEl = document.createElement('li')
         newLiEl.textContent = allPictures[i].name + ' clicked : ' + allPictures[i].clicked + ' Times';
-        // resultUl.appendChild(newLiEl);
     }
 }
 
-
-// function sectionCallBack(event) {
-//     checkTotalClicks();
-    
-//     if(event.target.id){
-//         totalClicks++;
-//         console.log(totalClicks, 'this is total clicks');
-//         allPictures[event.target.id].clicked++;
-        
-//         chooseNewPictures();
-//     } else {
-//         alert('click on an image');
-//     }
-// }
 
 function checkTotalClicks() {
     // console.log(totalClicks);
@@ -95,9 +82,22 @@ function checkTotalClicks() {
         imgEl1.removeEventListener('click', imageEl1CallBack);
         imgEl2.removeEventListener('click', imageEl2CallBack);
         imgEl3.removeEventListener('click', imageEl3Callback);
+        windDown();
     }
 }
 
+function onPageLoad() {
+    if (localStorage.array) {
+        allPictures = JSON.parse(localStorage.getItem('array'));
+    } else {
+        initialize();
+    }
+}
+
+function windDown() {
+    localStorage.setItem(JSON.stringify('array', allPictures));
+    clicksComplete = false;
+}
 
 //New Pictures
 
@@ -127,28 +127,29 @@ function chooseNewPictures() {
     imgEl3.src = allPictures[picture3Index].url;
     imgEl3.id = picture3Index;
 }
-
-new Picture('imgs/bag.jpg', 'r2-d2');
-new Picture('imgs/banana.jpg', 'banana');
-new Picture('imgs/bathroom.jpg', 'tp-ipad');
-new Picture('imgs/boots.jpg', 'georgie-boots');
-new Picture('imgs/breakfast.jpg', 'breakfast-oven');
-new Picture('imgs/bubblegum.jpg', 'gum');
-new Picture('imgs/chair.jpg', 'its-a-chair');
-new Picture('imgs/cthulhu.jpg', 'lord-darkness');
-new Picture('imgs/dog-duck.jpg', 'quackhuahua');
-new Picture('imgs/dragon.jpg', 'dragon-meat');
-new Picture('imgs/pen.jpg', 'modular-pens');
-new Picture('imgs/pet-sweep.jpg', 'pet-mop');
-new Picture('imgs/scissors.jpg', 'pizza-scissors');
-new Picture('imgs/shark.jpg', 'shark-sleep');
-new Picture('imgs/sweep.png', 'baby-sweep');
-new Picture('imgs/tauntaun.jpg', 'luke-baby');
-new Picture('imgs/unicorn.jpg', 'unicorn-meat');
-new Picture('imgs/usb.gif', 'tentacle-p..or..t');
-new Picture('imgs/water-can.jpg', 'water-jug');
-new Picture('imgs/wine-glass.jpg', 'smart-alcoholic');
-
+function initialize() {
+    new Picture('imgs/bag.jpg', 'r2-d2');
+    new Picture('imgs/banana.jpg', 'banana');
+    new Picture('imgs/bathroom.jpg', 'tp-ipad');
+    new Picture('imgs/boots.jpg', 'georgie-boots');
+    new Picture('imgs/breakfast.jpg', 'breakfast-oven');
+    new Picture('imgs/bubblegum.jpg', 'gum');
+    new Picture('imgs/chair.jpg', 'its-a-chair');
+    new Picture('imgs/cthulhu.jpg', 'lord-darkness');
+    new Picture('imgs/dog-duck.jpg', 'quackhuahua');
+    new Picture('imgs/dragon.jpg', 'dragon-meat');
+    new Picture('imgs/pen.jpg', 'modular-pens');
+    new Picture('imgs/pet-sweep.jpg', 'pet-mop');
+    new Picture('imgs/scissors.jpg', 'pizza-scissors');
+    new Picture('imgs/shark.jpg', 'shark-sleep');
+    new Picture('imgs/sweep.png', 'baby-sweep');
+    new Picture('imgs/tauntaun.jpg', 'luke-baby');
+    new Picture('imgs/unicorn.jpg', 'unicorn-meat');
+    new Picture('imgs/usb.gif', 'tentacle-p..or..t');
+    new Picture('imgs/water-can.jpg', 'water-jug');
+    new Picture('imgs/wine-glass.jpg', 'smart-alcoholic');
+    chooseNewPictures();
+}
 
 function updateChartArrays() {
     for (var i = 0; i < allPictures.length; i++) {
@@ -169,11 +170,11 @@ var data = {
             'navy'
         ],
         hoverBackgroundColor: [
-            'purple',
-            'purple',
-            'purple',
-            'purple',
-            'purple'
+            'blue',
+            'blue',
+            'blue',
+            'blue',
+            'blue'
         ]
     }]
 };
@@ -201,23 +202,5 @@ function drawChart() {
         }
     });
 }
-chooseNewPictures();
 
-
-
-// function onPageLoad() {
-//     //if local storage data exists
-//     if (localStorage.array) {
-//         //recall data 
-//         arrayOfItems = JSON.parse(localStorage.getItem('array'))
-
-//         selectNewObjects();
-//         buildDisplayTable();
-//     }
-
-//     else {
-//         initialize();
-//     }
-// }
-
-// onPageLoad();
+onPageLoad();
