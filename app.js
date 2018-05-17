@@ -4,41 +4,52 @@
 
 var allPictures = [];
 var currentPictures = [];
-var imgEl1 = document.getElementById('image1');
-var imgEl2 = document.getElementById('image2');
-var imgEl3 = document.getElementById('image3');
-var sectionEl = document.getElementById('click-tracker-container');
+var voteTotal = []; // array to push the amount of votes into for chart
+var pictureNames = []; //self-explanatory for picture names
 
+var imgEl1 = document.getElementById('image1'); // Left Image
+var imgEl2 = document.getElementById('image2'); // Center Image
+var imgEl3 = document.getElementById('image3'); // Right Image
+
+var sectionEl = document.getElementById('click-tracker-container');
 
 var picture1Index = 0;
 var picture2Index = 0;
 var picture3Index = 0;
 
 var totalClicks = 0;
-
+var myChart;
 
 function Picture (src, name, clicked) {
     this.url = src;
     this.name = name;
     this.clicked = 0;
-
-
+    
+    
     allPictures.push(this);
 }
+
+
 
 // sectionEl.addEventListener('click', sectionCallBack);
 
 
-// Event Listeners
+// Event Listener
 
 imgEl1.addEventListener('click', imageEl1CallBack);
 
 function imageEl1CallBack() {
     allPictures[picture1Index].clicked++;
     totalClicks++;
-    console.log('clicked on ', allPictures[picture1Index].url);
-    checkTotalClicks();
-    chooseNewPictures();
+    // console.log('clicked on ', allPictures[picture1Index].url);
+    if (totalClicks < 25) {
+        checkTotalClicks();
+        chooseNewPictures();
+    
+    } else {
+        updateChartArrays();
+        drawChart
+    }
 }
 
 imgEl2.addEventListener('click', imageEl2CallBack);
@@ -46,7 +57,7 @@ imgEl2.addEventListener('click', imageEl2CallBack);
 function imageEl2CallBack() { 
     allPictures[picture2Index].clicked++;
     totalClicks++;
-    console.log(allPictures[picture2Index]);
+    // console.log(allPictures[picture2Index]);
     checkTotalClicks();
     chooseNewPictures();
 }
@@ -56,7 +67,7 @@ imgEl3.addEventListener('click', imageEl3Callback);
 function imageEl3Callback() { 
     allPictures[picture3Index].clicked++;
     totalClicks++;
-    console.log(allPictures[picture3Index]);
+    // console.log(allPictures[picture3Index]);
     checkTotalClicks();
     chooseNewPictures();
 }
@@ -84,7 +95,7 @@ function renderResults(){
 // }
 
 function checkTotalClicks() {
-    console.log(totalClicks);
+    // console.log(totalClicks);
     if(totalClicks === 25) {
         console.log('removed');
         renderResults();
@@ -145,4 +156,78 @@ new Picture('imgs/usb.gif', 'tentacle-p..or..t');
 new Picture('imgs/water-can.jpg', 'water-jug');
 new Picture('imgs/wine-glass.jpg', 'smart-alcoholic');
 
+
+function updateChartArrays() {
+    for (var i = 0; i < allPictures.length; i++) {
+        pictureNames[i] = allPictures[i].name;
+        voteTotal[i] = allPictures[i].clicked;
+    }
+}
+
+var data = {
+    labels: pictureNames, // titles array we declared earlier
+    datasets: [{
+        data: voteTotal, // votes array we declared earlier
+        backgroundColor: [
+            'bisque',
+            'darkgray',
+            'burlywood',
+            'lightblue',
+            'navy'
+        ],
+        hoverBackgroundColor: [
+            'purple',
+            'purple',
+            'purple',
+            'purple',
+            'purple'
+        ]
+    }]
+};
+
+function drawChart() { 
+    var ctx = document.getElementById('busmall-chart').getContext('2d');
+    myChart = new Chart(ctx, {
+        type: 'bar',
+        data: data,
+        options: {
+            scales: {
+                yAxes: [{
+                    ticks: {
+                        beginAtZero:true
+                    }
+                }]
+                
+            }
+        }
+    });
+}
+
 chooseNewPictures();
+// updateChartArrays();
+// drawChart();
+
+// function hideChart() {
+    //     document.getElementById('busmall-chart').hidden = true;
+    // }
+    
+    // document.getElementById('busmall-chart').addEventListener('click', function() {
+//     drawChart();
+//     // setTimeout(hideChart, 5000);
+//   });
+
+//   document.getElementById('busmall-chart').addEventListener('click', function() {
+//       document.getElementById('busmall-chart').hidden = true;
+//     });
+    
+
+
+//   document.getElementById('voting').addEventListener('click', function(event) {
+//     if (event.target.id !== 'voting') {
+//       tallyVote(event.target.id);
+//     };
+  
+//     if (chartDrawn) {
+//       songChart.update();
+//     }
+//   });
